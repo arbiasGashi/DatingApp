@@ -50,15 +50,9 @@ namespace DatingAppAPI.Controllers
             var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
 
             _mapper.Map(memberUpdateDto, user);
-
             _userRepository.Update(user);
 
-            if (await _userRepository.SaveAllAsync())
-            {
-                return NoContent();
-            }
-
-            return BadRequest("Failed to update user");
+            return await _userRepository.SaveAllAsync() ? NoContent() : BadRequest("Failed to update user");
         }
 
         [HttpPost("add-photo")]
@@ -86,12 +80,10 @@ namespace DatingAppAPI.Controllers
 
             user.Photos.Add(photo);
 
-            if (await _userRepository.SaveAllAsync())
-            {
-                return CreatedAtRoute("GetUser", new { username = user.UserName }, _mapper.Map<PhotoDto>(photo));
-            }
-
-            return BadRequest("Problem adding photo");
+            return await _userRepository.SaveAllAsync() ? 
+                CreatedAtRoute("GetUser", new { username = user.UserName }, _mapper.Map<PhotoDto>(photo))
+                : 
+                BadRequest("Problem adding photo");
         }
 
         [HttpPut("set-main-photo/{photoId}")]
@@ -115,12 +107,7 @@ namespace DatingAppAPI.Controllers
 
             photo.IsMain = true;
 
-            if (await _userRepository.SaveAllAsync())
-            {
-                return NoContent();
-            }
-
-            return BadRequest("Failed to set main photo");
+            return await _userRepository.SaveAllAsync() ? NoContent() : BadRequest("Failed to set main photo");
         }
 
         [HttpDelete("delete-photo/{photoId}")]
