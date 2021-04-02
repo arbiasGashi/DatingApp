@@ -67,7 +67,5 @@ namespace DatingAppAPI.Controllers
 
             return Ok(users);
         }
-
-
     }
 }
