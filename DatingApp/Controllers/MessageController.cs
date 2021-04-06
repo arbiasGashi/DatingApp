@@ -2,6 +2,7 @@
 using DatingAppAPI.DTOs;
 using DatingAppAPI.Entities;
 using DatingAppAPI.Extensions;
+using DatingAppAPI.Helpers;
 using DatingAppAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +57,26 @@ namespace DatingAppAPI.Controllers
             _messageRepository.AddMessage(message);
 
             return await _messageRepository.SaveAllAsync() ? Ok(_mapper.Map<MessageDto>(message)) : BadRequest("Failed to send message");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
+        {
+            messageParams.Username = User.GetUsername();
+
+            var messages = await _messageRepository.GetMessagesForUser(messageParams);
+
+            Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
+
+            return messages;
+        }
+
+        [HttpGet("thread/{username}")]
+        public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username)
+        {
+            var currentUsername = User.GetUsername();
+
+            return Ok(await _messageRepository.GetMessageThread(currentUsername, username));
         }
     }
 }
