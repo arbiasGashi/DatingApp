@@ -4,6 +4,7 @@ using DatingAppAPI.DTOs;
 using DatingAppAPI.Entities;
 using DatingAppAPI.Helpers;
 using DatingAppAPI.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace DatingAppAPI.Data
 {
     public class UserRepository : IUserRepository
     {
+        private readonly UserManager<AppUser> _userManager;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
 
-        public UserRepository(DataContext context, IMapper mapper)
+        public UserRepository(UserManager<AppUser> userManager, DataContext context, IMapper mapper)
         {
+            _userManager = userManager;
             _context = context;
             _mapper = mapper;
         }
@@ -88,7 +91,7 @@ namespace DatingAppAPI.Data
 
         public async Task<bool> UserExists(string username)
         {
-            return await _context.Users.AnyAsync(x => x.UserName.Equals(username.ToLower()));
+            return await _userManager.Users.AnyAsync(x => x.UserName.Equals(username.ToLower()));
         }
 
         public async Task<bool> SaveAllAsync()
