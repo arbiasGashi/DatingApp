@@ -1,7 +1,10 @@
 ﻿using DatingAppAPI.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -13,9 +16,9 @@ namespace DatingAppAPI.Data
         {
             if (await userManager.Users.AnyAsync()) { return; }
 
-            var userData = await System.IO.File.ReadAllTextAsync("Data/UserSeedData.json");
+            var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
 
-            var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
+            var users = JsonSerializer.Deserialize<List<AppUser>>(userData).OrderBy(x => Guid.NewGuid());
 
             if (users == null)
             {
@@ -34,7 +37,7 @@ namespace DatingAppAPI.Data
                 await roleManager.CreateAsync(role);
             }
 
-            //roles.ForEach(async r => await roleManager.CreateAsync(r)); This throws exception, while the above one not!
+            // roles.ForEach(async r => await roleManager.CreateAsync(r)); This throws exception, while the above one not!
 
             foreach (var user in users)
             {
@@ -50,7 +53,6 @@ namespace DatingAppAPI.Data
 
             await userManager.CreateAsync(admin, "Pa$$w0rd6060-aDmIn");
             await userManager.AddToRolesAsync(admin, new[] { "Admin", "Moderator" });
-
         }
     }
 }

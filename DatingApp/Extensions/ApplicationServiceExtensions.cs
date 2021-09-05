@@ -27,13 +27,11 @@ namespace DatingAppAPI.Extensions
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddDbContext<DataContext>(options =>
             {
-                //options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
-                options.UseSqlServer(config.GetConnectionString("SecondConnection"));
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+                // options.UseSqlServer(config.GetConnectionString("SecondConnection"));
             });
 
             return services;
         }
-
-
     }
 }
