@@ -17,6 +17,7 @@ namespace DatingAppAPI.Data
         {
 
         }
+
         public DbSet<UserLike> Likes { get; set; }
         public DbSet<Message> Messages { get; set; }
 
@@ -35,6 +36,9 @@ namespace DatingAppAPI.Data
                 .WithOne(u => u.Role)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
+
+            builder.Entity<Photo>()
+                .ToTable("Photos");
 
             builder.Entity<UserLike>()
                 .HasKey(k => new { k.SourceUserId, k.LikedUserId });

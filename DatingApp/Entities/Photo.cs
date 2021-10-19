@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace DatingAppAPI.Entities
 {
-    [Table("Photos")]
     public class Photo
     {
         public int Id { get; set; }
