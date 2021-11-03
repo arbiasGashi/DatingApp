@@ -19,9 +19,8 @@ namespace DatingAppAPI.Data
         private readonly DataContext _context;
         private readonly IMapper _mapper;
 
-        public UserRepository(UserManager<AppUser> userManager, DataContext context, IMapper mapper)
+        public UserRepository(DataContext context, IMapper mapper)
         {
-            _userManager = userManager;
             _context = context;
             _mapper = mapper;
         }
@@ -79,6 +78,14 @@ namespace DatingAppAPI.Data
                 .ToListAsync();
         }
 
+        public async Task<string> GetUserGender(string username)
+        {
+            return await _context.Users
+                .Where(u => u.UserName.Equals(username))
+                .Select(u => u.Gender)
+                .FirstOrDefaultAsync();
+        }
+
         public void Update(AppUser user)
         {
             _context.Entry(user).State = EntityState.Modified;
@@ -87,16 +94,6 @@ namespace DatingAppAPI.Data
         public void Add(AppUser user)
         {
             _context.Users.Add(user);
-        }
-
-        public async Task<bool> UserExists(string username)
-        {
-            return await _userManager.Users.AnyAsync(x => x.UserName.Equals(username.ToLower()));
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

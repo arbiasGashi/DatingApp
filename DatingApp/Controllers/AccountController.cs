@@ -35,7 +35,7 @@ namespace DatingAppAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if (await _userRepository.UserExists(registerDto.Username))
+            if (await UserExists(registerDto.Username))
             {
                 return BadRequest("Username is taken");
             }
@@ -90,6 +90,11 @@ namespace DatingAppAPI.Controllers
             }
             :
             Unauthorized();
+        }
+
+        public async Task<bool> UserExists(string username)
+        {
+            return await _userManager.Users.AnyAsync(x => x.UserName.Equals(username.ToLower()));
         }
     }
 }

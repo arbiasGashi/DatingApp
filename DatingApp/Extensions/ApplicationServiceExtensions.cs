@@ -2,6 +2,7 @@
 using DatingAppAPI.Data;
 using DatingAppAPI.Helpers;
 using DatingAppAPI.Interfaces;
+using DatingAppAPI.Interfaces.UnitOfWork;
 using DatingAppAPI.Services;
 using DatingAppAPI.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,7 @@ namespace DatingAppAPI.Extensions
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ILikesRepository, LikesRepository>();
-            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IUnitOfWork, IUnitOfWork>();
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
